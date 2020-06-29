@@ -26,15 +26,13 @@ namespace Excogitated.PackageManagerPlus
     [Guid(PackageGuidString)]
     [PackageRegistration(UseManagedResourcesOnly = true, AllowsBackgroundLoading = true)]
     [ProvideMenuResource("Menus.ctmenu", 1)]
-    [ProvideToolWindow(typeof(Excogitated.PackageManagerPlus.MainWindow))]
+    [ProvideToolWindow(typeof(MainWindow))]
     public sealed class PackageManagerPlusPackage : AsyncPackage
     {
         /// <summary>
         /// Excogitated.PackageManagerPlusPackage GUID string.
         /// </summary>
         public const string PackageGuidString = "bc0c2752-bfdd-446a-8709-527c404a3ccc";
-
-        #region Package Members
 
         /// <summary>
         /// Initialization of the package; this method is called right after the package is sited, so this is the place
@@ -47,12 +45,8 @@ namespace Excogitated.PackageManagerPlus
         {
             // When initialized asynchronously, the current thread may be a background thread at this point.
             // Do any initialization that requires the UI thread after switching to the UI thread.
-            await this.JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
-            await Excogitated.PackageManagerPlus.MainWindowCommand.InitializeAsync(this);
-
-
+            await JoinableTaskFactory.SwitchToMainThreadAsync(cancellationToken);
+            await OpenManagerCommand.InitializeAsync(this);
         }
-
-        #endregion
     }
 }

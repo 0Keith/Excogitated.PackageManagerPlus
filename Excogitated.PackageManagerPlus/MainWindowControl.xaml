@@ -8,8 +8,7 @@
              Foreground="{DynamicResource {x:Static vsshell:VsBrushes.WindowTextKey}}"
              mc:Ignorable="d"
              d:DesignHeight="300" d:DesignWidth="300"
-             Name="MyToolWindow"
-             FontSize="8">
+             Name="MyToolWindow">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
@@ -21,10 +20,20 @@
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <TextBox Grid.Column="0" KeyUp="TextBox_KeyUp" Margin="1"/>
-            <Button Grid.Column="1" Name="_searchButton" Content="Search" Margin="1"/>
+            <TextBox Grid.Column="0" Name="QueryBox"  Margin="1"/>
+            <Button Grid.Column="1" Name="QueryButton" Content="Search" Margin="1"/>
             <Button Grid.Column="2" Name="_installButton" Content="Install" Margin="1"/>
         </Grid>
-        <DataGrid Grid.Row="1" Name="_packageGrid" Margin="1"/>
+        <DataGrid Grid.Row="1" Name="QueryGrid" Margin="1" 
+                  AutoGenerateColumns="True" 
+                  CanUserAddRows="False" 
+                  CanUserDeleteRows="False"
+                  CanUserReorderColumns="True"
+                  CanUserResizeColumns="True"
+                  CanUserResizeRows="True"
+                  CanUserSortColumns="True" 
+                  EnableRowVirtualization="True"
+                  EnableColumnVirtualization="True"
+                  />
     </Grid>
 </UserControl>
