@@ -1,7 +1,5 @@
 ﻿using Excogitated.Common;
-using Excogitated.PackageManagerPlus.Models;
-using Flurl;
-using Flurl.Http;
+using Excogitated.PackageManagerPlus.Api;
 using Microsoft.VisualStudio.Shell;
 using System;
 using System.ComponentModel;
@@ -42,31 +40,7 @@ namespace Excogitated.PackageManagerPlus
             try
             {
                 var query = QueryBox.Text?.Trim();
-                var results = await System.Threading.Tasks.Task.Run(async () =>
-                {
-                    var flurl = "https://azuresearch-usnc.nuget.org/query".SetQueryParams(new
-                    {
-                        q = query,
-                        take = 0,
-                    });
-                    var json = await flurl.GetStringAsync();
-                    var response = Jsonizer.Deserialize<NugetQueryResponse>(json);
-                    json = await flurl.SetQueryParams(new
-                    {
-                        q = query,
-                        take = response.totalHits,
-                    }).GetStringAsync();
-                    response = Jsonizer.Deserialize<NugetQueryResponse>(json);
-                    return response.data.Select(d => new QueryGridRow
-                    {
-                        Id = d.id,
-                        TotalDownloads = d.totalDownloads,
-                        Version = d.version,
-                        Verified = d.verified,
-                        Authors = string.Join(", ", d.authors),
-                        Description = d.description,
-                    }).OrderByDescending(r => r.TotalDownloads).ToList();
-                });
+                var results = await System.Threading.Tasks.Task.Run(() => NugetApi.GetPackages(query));
                 QueryGrid.ItemsSource = results;
                 if (QueryGrid.Items.SortDescriptions.Count == 0)
                 {
@@ -74,10 +48,10 @@ namespace Excogitated.PackageManagerPlus
                     QueryGrid.Items.SortDescriptions.Add(new SortDescription
                     {
                         Direction = ListSortDirection.Descending,
-                        PropertyName = nameof(QueryGridRow.TotalDownloads),
+                        PropertyName = nameof(NugetQueryData.TotalDownloads),
                     });
                     var column = QueryGrid.Columns
-                        .Where(c => c.Header is string h && h == nameof(QueryGridRow.TotalDownloads))
+                        .Where(c => c.Header is string h && h == nameof(NugetQueryData.TotalDownloads))
                         .First();
                     column.SortDirection = ListSortDirection.Descending;
                 }
@@ -89,13 +63,4 @@ namespace Excogitated.PackageManagerPlus
         }
     }
 
-    internal class QueryGridRow
-    {
-        public string Id { get; set; }
-        public int TotalDownloads { get; set; }
-        public string Version { get; set; }
-        public bool Verified { get; set; }
-        public string Authors { get; set; }
-        public string Description { get; set; }
-    }
 }
